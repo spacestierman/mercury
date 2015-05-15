@@ -5,9 +5,25 @@
 	},
 	"plugins": [
 		{
-			"type": "Mercury.Core.Plugins.EpiServer.EpiServerMercuryPlugin",
+			"type": "Mercury.Plugins.EpiServer.EpiServerMercuryPlugin",
+			"settings": {
+				"namespace": "Com.Space150.SampleProject.Web"
+			}
+		},
+		{
+			"type": "Mercury.Plugins.Test.TestMercuryPlugin",
 			"settings": {
 			}
+		}
+	],
+	"entities": [
+		{
+			"name": "ContactForm",
+			"fields": [{
+				"type": "integer",
+				"isPrimaryKey": true,
+				"required": true
+			}]
 		}
 	]
 }

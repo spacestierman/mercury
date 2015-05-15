@@ -5,26 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mercury.Core.Plugins.EpiServer
+namespace Mercury.Plugins.EpiServer
 {
 	public class EpiServerMercuryPlugin : MercuryPlugin
 	{
-		public string Namespace { get; set; }
-
 		public EpiServerMercuryPlugin() : base("EpiServer", @"Episerver\source\")
 		{
 			ListenForFilenamePattern("Web.config");
-		}
-
-		public override void LoadSettings(MercurySettings settings)
-		{
-			base.LoadSettings(settings);
-
-			const string KEY_NAMESPACE = "Namespace";
-			if (settings.Contains(KEY_NAMESPACE))
-			{
-				Namespace = settings.GetAsString(KEY_NAMESPACE);
-			}
 		}
 
 		protected override string OnFilenamePatternMatched(string filename, string contents)

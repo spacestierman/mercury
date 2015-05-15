@@ -1,4 +1,5 @@
-﻿using Mercury.Common;
+﻿using DiffMatchPatch;
+using Mercury.Common;
 using Mercury.Core;
 using Mercury.Models;
 using Mercury.Models.Configuration;
@@ -64,24 +65,31 @@ namespace Mercury
 
 			foreach (MercuryPlugin plugin in project.Plugins)
 			{
-				string pluginDirectory = GetPluginSourceDirectoryPath(plugin);
-				string[] pluginFiles = GetFilesInPluginSourceDirectory(plugin);
+				string[] pluginDirectories = GetAllDirectoriesInPluginSourceDirectory(plugin);
+				foreach (string pluginDirectory in pluginDirectories)
+				{
+					FilesystemHelper.EnsureAllDirectoriesExist(pluginDirectory);
+				}
+
+				string pluginRootDirectory = GetPluginSourceDirectoryPath(plugin);
+				string[] pluginFiles = GetAllFilesInPluginSourceDirectory(plugin);
 				foreach (string pluginFile in pluginFiles)
 				{
-					string relativePath = GetPathRelativeTo(pluginFile, pluginDirectory);
+					string relativePath = GetPathRelativeTo(pluginFile, pluginRootDirectory);
 					string outputFilePath = outputDirectory + @"\" + relativePath;
 					string outputDirectoryPath = FilesystemHelper.GetDirectoryForFilePath(outputFilePath);
 
-					FilesystemHelper.EnsureAllDirectoriesExist(outputDirectoryPath);
-
-					string contents = string.Empty;
-					if (!File.Exists(outputFilePath))
+					string contents = Render.FileToString(pluginFile, plugin.Settings.ToObject());
+					if (File.Exists(outputFilePath))
 					{
-						contents = Render.FileToString(pluginFile, plugin.Settings.ToObject());
-					}
-					else
-					{
-						throw new NotImplementedException("Need to figure out how to merge files");
+						 string existingFileContents = File.ReadAllText(outputFilePath);
+						diff_match_patch dmp = new diff_match_patch();
+						List<Diff> differences = dmp.diff_lineMode(existingFileContents, contents);
+						differences = differences.Where(x => x.operation != Operation.DELETE).ToList(); // Since we're "merging" whole different features, we don't want to remove lines. So we remove any deletes from the diff list.
+						List<Patch> patches = dmp.patch_make(existingFileContents, differences);
+						string patchesText = dmp.patch_toText(patches);
+						object[] results = dmp.patch_apply(patches, existingFileContents);
+						contents = (string)results[0];
 					}
 
 					foreach (MercuryPlugin otherPlugin in project.Plugins)
@@ -132,7 +140,13 @@ namespace Mercury
 			return pluginDirectory;
 		}
 
-		private string[] GetFilesInPluginSourceDirectory(MercuryPlugin plugin)
+		private string[] GetAllDirectoriesInPluginSourceDirectory(MercuryPlugin plugin)
+		{
+			string pluginDirectory = GetPluginSourceDirectoryPath(plugin);
+			return Directory.GetDirectories(pluginDirectory, "*", SearchOption.AllDirectories);
+		}
+
+		private string[] GetAllFilesInPluginSourceDirectory(MercuryPlugin plugin)
 		{
 			string pluginDirectory = GetPluginSourceDirectoryPath(plugin);
 			return Directory.GetFiles(pluginDirectory, "*", SearchOption.AllDirectories);

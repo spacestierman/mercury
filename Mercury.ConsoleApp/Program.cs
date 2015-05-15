@@ -10,7 +10,7 @@ namespace Mercury.ConsoleApp
     {
         static void Main(string[] args)
         {
-            MercuryBuilder builder = new MercuryBuilder(@"C:\dev\Mercury\Mercury\Core\");
+            MercuryBuilder builder = new MercuryBuilder(@"C:\dev\Mercury\Mercury\");
             builder.Build(@"C:\dev\Mercury\Mercury.ConsoleApp\Sample\SampleProject.json", @"C:\dev\Mercury\Mercury.ConsoleApp\Sample\output\");
 
             Console.WriteLine("Done.");
