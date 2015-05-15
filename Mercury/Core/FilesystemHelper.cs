@@ -33,6 +33,17 @@ namespace Mercury.Core
 			return output;
 		}
 
+		public static string EnsureNoPrefixedForwardSlash(string path)
+		{
+			string output = EnsureForwardSlashes(path);
+			if (output.StartsWith(FORWARD_SLASH))
+			{
+				output = path.Substring(1);
+			}
+
+			return output;
+		}
+
 		public static string EnsureTrailingForwardSlash(string path)
 		{
 			string output = EnsureForwardSlashes(path);
@@ -66,6 +77,21 @@ namespace Mercury.Core
 			}
 
 			return directories;
+		}
+
+		public static string GetFileExtension(string path)
+		{
+			string[] tokens = path.Split(new string[] { FORWARD_SLASH }, StringSplitOptions.RemoveEmptyEntries);
+			string filename = tokens.Last();
+
+			const string FILE_EXTENSION_SEPARATOR = ".";
+			if (filename.IndexOf(FILE_EXTENSION_SEPARATOR) <= 0)
+			{
+				throw new ArgumentException("path does not appear to be a file");
+			}
+
+			string[] fileTokens = filename.Split(new string[] { FILE_EXTENSION_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries);
+			return fileTokens.Last();
 		}
 	}
 }

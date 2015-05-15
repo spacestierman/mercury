@@ -48,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\FilesystemHelper.cs" />
-    <Compile Include="Plugins\ASPMVC4\AspNetMvc4MercuryPlugin.cs" />
+    <Compile Include="Plugins\ASPMVC4\AspMvc4MercuryPlugin.cs" />
     <Compile Include="Plugins\EpiServer\EpiServerMercuryPlugin.cs" />
     <Compile Include="MercuryBuilder.cs" />
     <Compile Include="Models\Configuration\MercuryConfiguration.cs" />

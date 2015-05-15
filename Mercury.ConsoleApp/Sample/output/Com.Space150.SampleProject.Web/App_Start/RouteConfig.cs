@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace MvcApplicationName
+namespace Com.Space150.SampleProject.Web
 {
 	public class RouteConfig
 	{

@@ -1,7 +1,7 @@
-﻿using System.Web;
+using System.Web;
 using System.Web.Mvc;
 
-namespace MvcApplicationName
+namespace Com.Space150.SampleProject.Web
 {
 	public class FilterConfig
 	{

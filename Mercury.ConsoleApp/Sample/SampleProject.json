@@ -5,14 +5,9 @@
 	},
 	"plugins": [
 		{
-			"type": "Mercury.Plugins.EpiServer.EpiServerMercuryPlugin",
+			"type": "Mercury.Plugins.ASPMVC4.AspMvc4MercuryPlugin",
 			"settings": {
 				"namespace": "Com.Space150.SampleProject.Web"
-			}
-		},
-		{
-			"type": "Mercury.Plugins.Test.TestMercuryPlugin",
-			"settings": {
 			}
 		}
 	],

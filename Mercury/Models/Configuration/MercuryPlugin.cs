@@ -93,5 +93,15 @@ namespace Mercury.Models.Configuration
 		{
 			return contents; // For subclasses to implement
 		}
+
+		public virtual string ChanceToChangeDirectoryName(string directoryPath)
+		{
+			return directoryPath; // For subclasses to implement
+		}
+
+		public virtual string ChanceToChangeFileName(string filePath)
+		{
+			return filePath; // For subclasses to implement
+		}
 	}
 }

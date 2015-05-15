@@ -16,6 +16,9 @@ namespace Mercury
 {
     public class MercuryBuilder
     {
+		private const string TEMPLATE_EXTENSION = "template";
+		private const string TEMPLATE_INDICATOR = "." + TEMPLATE_EXTENSION;
+
 		private string _coreDirectory;
 		private MercuryConfiguration _configuration;
 
@@ -26,7 +29,7 @@ namespace Mercury
 				throw new ArgumentRequiredException("coreDirectory");
 			}
 
-			_coreDirectory = coreDirectory;
+			_coreDirectory = FilesystemHelper.EnsureTrailingForwardSlash(coreDirectory);
         }
 
         public void Build(string projectJsonAbsoluteFilePath, string outputDirectory)
@@ -65,41 +68,67 @@ namespace Mercury
 
 			foreach (MercuryPlugin plugin in project.Plugins)
 			{
+				string pluginRootDirectory = GetPluginSourceDirectoryPath(plugin);
 				string[] pluginDirectories = GetAllDirectoriesInPluginSourceDirectory(plugin);
 				foreach (string pluginDirectory in pluginDirectories)
 				{
-					FilesystemHelper.EnsureAllDirectoriesExist(pluginDirectory);
+					string useDirectory = GetPathRelativeTo(pluginDirectory, pluginRootDirectory);
+					useDirectory = outputDirectory + @"\" + plugin.ChanceToChangeDirectoryName(useDirectory);
+					FilesystemHelper.EnsureAllDirectoriesExist(useDirectory);
 				}
 
-				string pluginRootDirectory = GetPluginSourceDirectoryPath(plugin);
 				string[] pluginFiles = GetAllFilesInPluginSourceDirectory(plugin);
 				foreach (string pluginFile in pluginFiles)
 				{
 					string relativePath = GetPathRelativeTo(pluginFile, pluginRootDirectory);
 					string outputFilePath = outputDirectory + @"\" + relativePath;
-					string outputDirectoryPath = FilesystemHelper.GetDirectoryForFilePath(outputFilePath);
-
-					string contents = Render.FileToString(pluginFile, plugin.Settings.ToObject());
-					if (File.Exists(outputFilePath))
+					bool fileNeedsTemplating = FileNeedsTemplating(outputFilePath);
+					if (fileNeedsTemplating)
 					{
-						 string existingFileContents = File.ReadAllText(outputFilePath);
-						diff_match_patch dmp = new diff_match_patch();
-						List<Diff> differences = dmp.diff_lineMode(existingFileContents, contents);
-						differences = differences.Where(x => x.operation != Operation.DELETE).ToList(); // Since we're "merging" whole different features, we don't want to remove lines. So we remove any deletes from the diff list.
-						List<Patch> patches = dmp.patch_make(existingFileContents, differences);
-						string patchesText = dmp.patch_toText(patches);
-						object[] results = dmp.patch_apply(patches, existingFileContents);
-						contents = (string)results[0];
+						outputFilePath = outputFilePath.Substring(0, outputFilePath.Length - TEMPLATE_INDICATOR.Length); // Strip out the template extension
 					}
 
-					foreach (MercuryPlugin otherPlugin in project.Plugins)
-					{
-						contents = otherPlugin.ChanceToProcessFile(relativePath, contents);
-					}
+					outputFilePath = plugin.ChanceToChangeFileName(outputFilePath);
 
-					File.WriteAllText(outputFilePath, contents);
+					if (!fileNeedsTemplating)
+					{
+						File.Copy(pluginFile, outputFilePath);
+					}
+					else
+					{
+						string contents = Render.FileToString(pluginFile, plugin.Settings.ToObject());
+						if (File.Exists(outputFilePath))
+						{
+							string existingFileContents = File.ReadAllText(outputFilePath);
+							diff_match_patch dmp = new diff_match_patch();
+							List<Diff> differences = dmp.diff_lineMode(existingFileContents, contents);
+							differences = differences.Where(x => x.operation != Operation.DELETE).ToList(); // Since we're "merging" whole different features, we don't want to remove lines. So we remove any deletes from the diff list.
+							List<Patch> patches = dmp.patch_make(existingFileContents, differences);
+							string patchesText = dmp.patch_toText(patches);
+							object[] results = dmp.patch_apply(patches, existingFileContents);
+							contents = (string)results[0];
+						}
+
+						foreach (MercuryPlugin otherPlugin in project.Plugins)
+						{
+							contents = otherPlugin.ChanceToProcessFile(relativePath, contents);
+						}
+
+						File.WriteAllText(outputFilePath, contents);
+					}
 				}
 			}
+		}
+
+		private bool FileNeedsTemplating(string filepath)
+		{
+			string extension = FilesystemHelper.GetFileExtension(filepath);
+			if (string.IsNullOrEmpty(extension))
+			{
+				return false;
+			}
+
+			return extension.EndsWith(TEMPLATE_EXTENSION);
 		}
 
 		private bool TryToEmptyDirectory(string directory)
@@ -136,7 +165,7 @@ namespace Mercury
 
 		private string GetPluginSourceDirectoryPath(MercuryPlugin plugin)
 		{
-			string pluginDirectory = _coreDirectory + @"\Plugins\" + plugin.SourceDirectory;
+			string pluginDirectory = _coreDirectory + @"Plugins\" + FilesystemHelper.EnsureNoPrefixedForwardSlash(plugin.SourceDirectory);
 			return pluginDirectory;
 		}
 
