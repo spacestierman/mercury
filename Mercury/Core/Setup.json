@@ -1,0 +1,11 @@
+﻿{
+	"plugins": [
+		{
+			"name": "EpiServer",
+			"dependencies": [
+				
+			],
+			"sourceDirectory": "C:\\dev\Mercury\\Mercury\\Mercury\\Core\\Plugins\\EpiServer\\"
+		}
+	]
+}

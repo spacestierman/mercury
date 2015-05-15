@@ -1,0 +1,31 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mercury", "Mercury\Mercury.csproj", "{E65C912D-078E-4BCF-BE17-056D356BDCA2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mercury.ConsoleApp", "Mercury.ConsoleApp\Mercury.ConsoleApp.csproj", "{0B4C9AA0-FE0C-43BF-A070-FF09B108B563}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mercury.Common", "Mercury.Common\Mercury.Common.csproj", "{7D8594C5-08EF-4287-A374-F4E04C6C54DC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E65C912D-078E-4BCF-BE17-056D356BDCA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E65C912D-078E-4BCF-BE17-056D356BDCA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E65C912D-078E-4BCF-BE17-056D356BDCA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E65C912D-078E-4BCF-BE17-056D356BDCA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B4C9AA0-FE0C-43BF-A070-FF09B108B563}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B4C9AA0-FE0C-43BF-A070-FF09B108B563}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B4C9AA0-FE0C-43BF-A070-FF09B108B563}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B4C9AA0-FE0C-43BF-A070-FF09B108B563}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D8594C5-08EF-4287-A374-F4E04C6C54DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D8594C5-08EF-4287-A374-F4E04C6C54DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D8594C5-08EF-4287-A374-F4E04C6C54DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D8594C5-08EF-4287-A374-F4E04C6C54DC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
