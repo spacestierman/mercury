@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Mercury.Common;
+using Mercury.Models.Configuration;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,9 +22,36 @@ namespace Mercury.Models.Project
 		{
 			MercuryProject project = Newtonsoft.Json.JsonConvert.DeserializeObject<MercuryProject>(fileContents);
 
-			/// TODO: Make sure we correctly import the plugins.
+			foreach (KeyValuePair<string, object> setting in project._settings)
+			{
+				project.Settings.Set(setting.Key, setting.Value);
+			}
+
+			foreach (MercuryPluginData pluginData in project._plugins)
+			{
+				MercuryPlugin plugin = (MercuryPlugin)TryToBuildObjectFromTypeString(pluginData.Type);
+				if (plugin == null)
+				{
+					throw new FormattedException("Unable to determine the plugin type \"{0}\".", pluginData.Type);
+				}
+
+				plugin.Settings.Merge(project.Settings);
+				foreach (KeyValuePair<string, object> setting in pluginData.Settings)
+				{
+					plugin.Settings.Set(setting.Key, setting.Value);
+				}
+
+				project.Plugins.Add(plugin);
+			}
 
 			return project;
+		}
+
+		private static object TryToBuildObjectFromTypeString(string typeName)
+		{
+			Type type = Type.GetType(typeName);
+			object instance = Activator.CreateInstance(type);
+			return instance;
 		}
 	}
 }

@@ -1,6 +1,9 @@
 ﻿using Mercury.Common;
+using Mercury.Core;
+using Mercury.Models;
 using Mercury.Models.Configuration;
 using Mercury.Models.Project;
+using Nustache.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,9 +15,17 @@ namespace Mercury
 {
     public class MercuryBuilder
     {
-        public MercuryBuilder(string coreSetupAbsoluteFilePath)
-        {
+		private string _coreDirectory;
+		private MercuryConfiguration _configuration;
 
+        public MercuryBuilder(string coreDirectory)
+        {
+			if (string.IsNullOrEmpty(coreDirectory))
+			{
+				throw new ArgumentRequiredException("coreDirectory");
+			}
+
+			_coreDirectory = coreDirectory;
         }
 
         public void Build(string projectJsonAbsoluteFilePath, string outputDirectory)
@@ -45,7 +56,7 @@ namespace Mercury
 				}
 			}
 
-			bool successfullyDeletedAllFiles = TryToDeleteAllFilesInDirectory(outputDirectory);
+			bool successfullyDeletedAllFiles = TryToEmptyDirectory(outputDirectory);
 			if (!successfullyDeletedAllFiles)
 			{
 				throw new Exception("Unable to delete all of the files in the output directory.");
@@ -53,14 +64,40 @@ namespace Mercury
 
 			foreach (MercuryPlugin plugin in project.Plugins)
 			{
+				string pluginDirectory = GetPluginSourceDirectoryPath(plugin);
+				string[] pluginFiles = GetFilesInPluginSourceDirectory(plugin);
+				foreach (string pluginFile in pluginFiles)
+				{
+					string relativePath = GetPathRelativeTo(pluginFile, pluginDirectory);
+					string outputFilePath = outputDirectory + @"\" + relativePath;
+					string outputDirectoryPath = FilesystemHelper.GetDirectoryForFilePath(outputFilePath);
 
+					FilesystemHelper.EnsureAllDirectoriesExist(outputDirectoryPath);
+
+					string contents = string.Empty;
+					if (!File.Exists(outputFilePath))
+					{
+						contents = Render.FileToString(pluginFile, plugin.Settings.ToObject());
+					}
+					else
+					{
+						throw new NotImplementedException("Need to figure out how to merge files");
+					}
+
+					foreach (MercuryPlugin otherPlugin in project.Plugins)
+					{
+						contents = otherPlugin.ChanceToProcessFile(relativePath, contents);
+					}
+
+					File.WriteAllText(outputFilePath, contents);
+				}
 			}
 		}
 
-		private bool TryToDeleteAllFilesInDirectory(string directory)
+		private bool TryToEmptyDirectory(string directory)
 		{
 			bool deletedAllFiles = true;
-			string[] files = Directory.GetFiles(directory);
+			string[] files = Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
 			foreach (string file in files)
 			{
 				try
@@ -73,7 +110,44 @@ namespace Mercury
 				}
 			}
 
+			string[] directories = Directory.GetDirectories(directory);
+			foreach (string directoryPath in directories)
+			{
+				try
+				{
+					Directory.Delete(directoryPath, true);
+				}
+				catch
+				{
+					deletedAllFiles = false;
+				}
+			}
+
 			return deletedAllFiles;
+		}
+
+		private string GetPluginSourceDirectoryPath(MercuryPlugin plugin)
+		{
+			string pluginDirectory = _coreDirectory + @"\Plugins\" + plugin.SourceDirectory;
+			return pluginDirectory;
+		}
+
+		private string[] GetFilesInPluginSourceDirectory(MercuryPlugin plugin)
+		{
+			string pluginDirectory = GetPluginSourceDirectoryPath(plugin);
+			return Directory.GetFiles(pluginDirectory, "*", SearchOption.AllDirectories);
+		}
+
+		private string GetPathRelativeTo(string absolutePath, string relativeFromPath)
+		{
+			if (!absolutePath.StartsWith(relativeFromPath))
+			{
+				throw new ArgumentException("absolutePath must be relative to the supplied path");
+			}
+
+			/// TODO: Add in better checks for trailing slashes, etc
+			string result = absolutePath.Substring(relativeFromPath.Length);
+			return result;
 		}
     }
 }

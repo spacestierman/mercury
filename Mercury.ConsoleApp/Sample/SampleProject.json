@@ -1,6 +1,13 @@
 ﻿{
-	"name": "Sample Project",
+	"settings": {
+		"projectName": "Sample Project",
+		"namespace": "Com.Space150.SampleProject"
+	},
 	"plugins": [
-
+		{
+			"type": "Mercury.Core.Plugins.EpiServer.EpiServerMercuryPlugin",
+			"settings": {
+			}
+		}
 	]
 }
