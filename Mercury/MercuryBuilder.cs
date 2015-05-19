@@ -2,8 +2,6 @@
 using Mercury.Common;
 using Mercury.Core;
 using Mercury.Models;
-using Mercury.Models.Configuration;
-using Mercury.Models.Project;
 using Nustache.Core;
 using System;
 using System.Collections.Generic;
@@ -66,58 +64,8 @@ namespace Mercury
 				throw new Exception("Unable to delete all of the files in the output directory.");
 			}
 
-			foreach (MercuryPlugin plugin in project.Plugins)
-			{
-				string pluginRootDirectory = GetPluginSourceDirectoryPath(plugin);
-				string[] pluginDirectories = GetAllDirectoriesInPluginSourceDirectory(plugin);
-				foreach (string pluginDirectory in pluginDirectories)
-				{
-					string useDirectory = GetPathRelativeTo(pluginDirectory, pluginRootDirectory);
-					useDirectory = outputDirectory + @"\" + plugin.ChanceToChangeDirectoryName(useDirectory);
-					FilesystemHelper.EnsureAllDirectoriesExist(useDirectory);
-				}
-
-				string[] pluginFiles = GetAllFilesInPluginSourceDirectory(plugin);
-				foreach (string pluginFile in pluginFiles)
-				{
-					string relativePath = GetPathRelativeTo(pluginFile, pluginRootDirectory);
-					string outputFilePath = outputDirectory + @"\" + relativePath;
-					bool fileNeedsTemplating = FileNeedsTemplating(outputFilePath);
-					if (fileNeedsTemplating)
-					{
-						outputFilePath = outputFilePath.Substring(0, outputFilePath.Length - TEMPLATE_INDICATOR.Length); // Strip out the template extension
-					}
-
-					outputFilePath = plugin.ChanceToChangeFileName(outputFilePath);
-
-					if (!fileNeedsTemplating)
-					{
-						File.Copy(pluginFile, outputFilePath);
-					}
-					else
-					{
-						string contents = Render.FileToString(pluginFile, plugin.Settings.ToObject());
-						if (File.Exists(outputFilePath))
-						{
-							string existingFileContents = File.ReadAllText(outputFilePath);
-							diff_match_patch dmp = new diff_match_patch();
-							List<Diff> differences = dmp.diff_lineMode(existingFileContents, contents);
-							differences = differences.Where(x => x.operation != Operation.DELETE).ToList(); // Since we're "merging" whole different features, we don't want to remove lines. So we remove any deletes from the diff list.
-							List<Patch> patches = dmp.patch_make(existingFileContents, differences);
-							string patchesText = dmp.patch_toText(patches);
-							object[] results = dmp.patch_apply(patches, existingFileContents);
-							contents = (string)results[0];
-						}
-
-						foreach (MercuryPlugin otherPlugin in project.Plugins)
-						{
-							contents = otherPlugin.ChanceToProcessFile(relativePath, contents);
-						}
-
-						File.WriteAllText(outputFilePath, contents);
-					}
-				}
-			}
+			HaveEachPluginMoveTheirSourceFilesOver(project.Plugins, outputDirectory);
+			GiveEachPluginChanceToProcessEntities(project.Plugins, outputDirectory, project.Entities);
 		}
 
 		private bool FileNeedsTemplating(string filepath)
@@ -163,6 +111,62 @@ namespace Mercury
 			return deletedAllFiles;
 		}
 
+		private void HaveEachPluginMoveTheirSourceFilesOver(IEnumerable<MercuryPlugin> plugins, string outputDirectory)
+		{
+			foreach (MercuryPlugin plugin in plugins)
+			{
+				string pluginRootDirectory = GetPluginSourceDirectoryPath(plugin);
+				string[] pluginDirectories = GetAllDirectoriesInPluginSourceDirectory(plugin);
+				foreach (string pluginDirectory in pluginDirectories)
+				{
+					string useDirectory = GetPathRelativeTo(pluginDirectory, pluginRootDirectory);
+					useDirectory = outputDirectory + @"\" + plugin.ChanceToChangeDirectoryName(useDirectory);
+					FilesystemHelper.EnsureAllDirectoriesExist(useDirectory);
+				}
+
+				string[] pluginFiles = GetAllFilesInPluginSourceDirectory(plugin);
+				foreach (string pluginFile in pluginFiles)
+				{
+					string relativePath = GetPathRelativeTo(pluginFile, pluginRootDirectory);
+					string outputFilePath = outputDirectory + @"\" + relativePath;
+					bool fileNeedsTemplating = FileNeedsTemplating(outputFilePath);
+					if (fileNeedsTemplating)
+					{
+						outputFilePath = outputFilePath.Substring(0, outputFilePath.Length - TEMPLATE_INDICATOR.Length); // Strip out the template extension
+					}
+
+					outputFilePath = plugin.ChanceToChangeFileName(outputFilePath);
+
+					if (!fileNeedsTemplating)
+					{
+						File.Copy(pluginFile, outputFilePath);
+					}
+					else
+					{
+						string contents = Render.FileToString(pluginFile, plugin.Settings.ToObject());
+						if (File.Exists(outputFilePath))
+						{
+							string existingFileContents = File.ReadAllText(outputFilePath);
+							diff_match_patch dmp = new diff_match_patch();
+							List<Diff> differences = dmp.diff_lineMode(existingFileContents, contents);
+							differences = differences.Where(x => x.operation != Operation.DELETE).ToList(); // Since we're "merging" whole different features, we don't want to remove lines. So we remove any deletes from the diff list.
+							List<Patch> patches = dmp.patch_make(existingFileContents, differences);
+							string patchesText = dmp.patch_toText(patches);
+							object[] results = dmp.patch_apply(patches, existingFileContents);
+							contents = (string)results[0];
+						}
+
+						foreach (MercuryPlugin otherPlugin in plugins)
+						{
+							contents = otherPlugin.ChanceToProcessFile(relativePath, contents);
+						}
+
+						File.WriteAllText(outputFilePath, contents);
+					}
+				}
+			}
+		}
+
 		private string GetPluginSourceDirectoryPath(MercuryPlugin plugin)
 		{
 			string pluginDirectory = _coreDirectory + @"Plugins\" + FilesystemHelper.EnsureNoPrefixedForwardSlash(plugin.SourceDirectory);
@@ -191,6 +195,14 @@ namespace Mercury
 			/// TODO: Add in better checks for trailing slashes, etc
 			string result = absolutePath.Substring(relativeFromPath.Length);
 			return result;
+		}
+
+		private void GiveEachPluginChanceToProcessEntities(IEnumerable<MercuryPlugin> plugins, string outputDirectory, IEnumerable<MercuryEntity> entities)
+		{
+			foreach (MercuryPlugin plugin in plugins)
+			{
+				plugin.ChanceToProcessEntities(entities, _coreDirectory, outputDirectory);
+			}
 		}
     }
 }

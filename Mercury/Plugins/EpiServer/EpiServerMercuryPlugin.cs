@@ -1,4 +1,4 @@
-﻿using Mercury.Models.Configuration;
+﻿using Mercury.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace Mercury.Plugins.EpiServer
 {
 	public class EpiServerMercuryPlugin : MercuryPlugin
 	{
-		public EpiServerMercuryPlugin() : base("EpiServer", @"Episerver\source\")
+		public EpiServerMercuryPlugin() : base("EpiServer", @"Episerver\source\", @"Episerver\templates\")
 		{
 			ListenForFilenamePattern("Web.config");
 		}

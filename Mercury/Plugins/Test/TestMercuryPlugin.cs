@@ -1,4 +1,4 @@
-﻿using Mercury.Models.Configuration;
+﻿using Mercury.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace Mercury.Plugins.Test
 {
 	public class TestMercuryPlugin : MercuryPlugin
 	{
-		public TestMercuryPlugin() : base("Test Plugin", @"Test\source\")
+		public TestMercuryPlugin() : base("Test Plugin", @"Test\source\", @"Test\templates\")
 		{
 
 		}

@@ -1,4 +1,4 @@
-﻿using Mercury.Models.Configuration;
+﻿using Mercury.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

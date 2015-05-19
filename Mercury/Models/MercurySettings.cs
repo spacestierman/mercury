@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mercury.Models.Configuration
+namespace Mercury.Models
 {
 	public class MercurySettings
 	{

@@ -93,5 +93,13 @@ namespace Mercury.Core
 			string[] fileTokens = filename.Split(new string[] { FILE_EXTENSION_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries);
 			return fileTokens.Last();
 		}
+
+		public static void EnsureDirectoryExistsAndWriteFileContents(string absoluteFilePath, string fileContent)
+		{
+			string directory = GetDirectoryForFilePath(absoluteFilePath);
+			EnsureAllDirectoriesExist(directory);
+
+			File.WriteAllText(absoluteFilePath, fileContent);
+		}
 	}
 }

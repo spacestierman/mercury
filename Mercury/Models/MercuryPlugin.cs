@@ -1,5 +1,5 @@
 ﻿using Mercury.Common;
-using Mercury.Models.Project;
+using Mercury.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,12 +9,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Mercury.Models.Configuration
+namespace Mercury.Models
 {
 	public class MercuryPlugin
 	{
 		public string Name { get; set; }
 		public string SourceDirectory { get; set; }
+		public string TemplateDirectory { get; set; }
 		
 		public MercurySettings Settings { get; set; }
 
@@ -23,7 +24,7 @@ namespace Mercury.Models.Configuration
 
 		private List<Regex> _listenForFilenamePatterns;
 
-		public MercuryPlugin(string name, string sourceDirectory)
+		public MercuryPlugin(string name, string sourceDirectory, string templateDirectory)
 		{
 			if (string.IsNullOrEmpty(name))
 			{
@@ -33,9 +34,14 @@ namespace Mercury.Models.Configuration
 			{
 				throw new ArgumentRequiredException("sourceDirectory");
 			}
+			if (string.IsNullOrEmpty(templateDirectory))
+			{
+				throw new ArgumentRequiredException("templateDirectory");
+			}
 
 			Name = name;
 			SourceDirectory = sourceDirectory;
+			TemplateDirectory = templateDirectory;
 
 			Settings = new MercurySettings();
 
@@ -102,6 +108,11 @@ namespace Mercury.Models.Configuration
 		public virtual string ChanceToChangeFileName(string filePath)
 		{
 			return filePath; // For subclasses to implement
+		}
+
+		public virtual void ChanceToProcessEntities(IEnumerable<MercuryEntity> entities, string rootDirectory, string outputDirectory)
+		{
+			// For subclasses to implement
 		}
 	}
 }

@@ -13,12 +13,131 @@
 	],
 	"entities": [
 		{
-			"name": "ContactForm",
-			"fields": [{
-				"type": "integer",
-				"isPrimaryKey": true,
-				"required": true
-			}]
+			"name": "ContactFormRequests",
+			"displayName": "Contact Form Requests",
+			"fields": [
+				{
+					"name": "RecordID",
+					"type": "integer",
+					"isPrimaryKey": true,
+					"validation": []
+				},
+				{
+					"name": "FirstName",
+					"displayName": "First Name",
+					"type": "nvarchar",
+					"validation": [
+						{ 
+							"type": "Mercury.Validations.RequiredValidation"
+						},
+						{ 
+							"type": "Mercury.Validations.MaximumLengthValidation",
+							"settings": {
+								"maximumLength": 250
+							}
+						}
+					],
+					"uiHint": "input[text]"
+				},
+				{
+					"name": "LastName",
+					"displayName": "Last Name",
+					"type": "nvarchar",
+					"validation": [
+						{ 
+							"type": "Mercury.Validations.RequiredValidation"
+						},
+						{ 
+							"type": "Mercury.Validations.MaximumLengthValidation",
+							"settings": {
+								"maximumLength": 250
+							}
+						}
+					],
+					"uiHint": "input[text]"
+				},
+				{
+					"name": "Email",
+					"displayName": "Email",
+					"type": "nvarchar",
+					"validation": [
+						{ "type": "Mercury.Validations.RequiredValidation" },
+						{ "type": "Mercury.Validations.EmailValidation" }
+					],
+					"uiHint": "input[email]"
+				},
+				{
+					"name": "Division",
+					"displayName": "Division",
+					"type": "nvarchar",
+					"validation": [
+						{ "type": "Mercury.Validations.RequiredValidation" }
+					],
+					"uiHint": "select",
+					"values": [
+						"Engineering",
+						"Design",
+						"UX",
+						"Strategy",
+						"AM/PM"
+					]
+				},
+				{
+					"name": "IndustryID",
+					"displayName": "Industry",
+					"type": "integer",
+					"validation": [
+						{ "type": "Mercury.Validations.RequiredValidation" }
+					],
+					"uiHint": "input[radio]",
+					"references": {
+						"entity": "Industries",
+						"key": "IndustryID",
+						"display": "Name"
+					}
+				},
+				{
+					"name": "Comments",
+					"displayName": "Comments",
+					"type": "text",
+					"validation": [],
+					"uiHint": "textarea"
+				},
+			]
+		},
+		{
+			"name": "Industries",
+			"displayName": "Industries",
+			"fields": [
+				{
+					"name": "IndustryID",
+					"type": "integer",
+					"isPrimaryKey": true,
+					"validation": []
+				},
+				{
+					"name": "Name",
+					"type": "nvarchar",
+					"uiHint": "textbox",
+					"validation": [
+						{ 
+							"type": "Mercury.Validations.RequiredValidation"
+						},
+						{ 
+							"type": "Mercury.Validations.MinimumLengthValidation",
+							"settings": {
+								"minimumLength": 1
+							}
+						},
+						{ 
+							"type": "Mercury.Validations.MaximumLengthValidation",
+							"settings": {
+								"maximumLength": 250
+							}
+						}
+					]
+				}
+			]
 		}
 	]
 }
