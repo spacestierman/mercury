@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\FilesystemHelper.cs" />
+    <Compile Include="Core\LineMerger.cs" />
     <Compile Include="Models\MercuryEntityFieldjson.cs" />
     <Compile Include="Models\MercuryEntity.cs" />
     <Compile Include="Models\MercuryEntityData.cs" />
@@ -59,8 +60,6 @@
     <Compile Include="Plugins\EntityAndSettingsMustacheModel.cs" />
     <Compile Include="Plugins\EpiServer\EpiServerMercuryPlugin.cs" />
     <Compile Include="MercuryBuilder.cs" />
-    <Compile Include="Models\MercuryConfiguration.cs" />
-    <Compile Include="Models\MercuryConfigurationParser.cs" />
     <Compile Include="Models\MercuryPlugin.cs" />
     <Compile Include="Models\MercuryPluginJson.cs" />
     <Compile Include="Models\MercurySettings.cs" />

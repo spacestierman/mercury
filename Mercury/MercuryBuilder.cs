@@ -18,7 +18,6 @@ namespace Mercury
 		private const string TEMPLATE_INDICATOR = "." + TEMPLATE_EXTENSION;
 
 		private string _coreDirectory;
-		private MercuryConfiguration _configuration;
 
         public MercuryBuilder(string coreDirectory)
         {
@@ -58,7 +57,7 @@ namespace Mercury
 				}
 			}
 
-			bool successfullyDeletedAllFiles = TryToEmptyDirectory(outputDirectory);
+			bool successfullyDeletedAllFiles = FilesystemHelper.TryToEmptyDirectory(outputDirectory);
 			if (!successfullyDeletedAllFiles)
 			{
 				throw new Exception("Unable to delete all of the files in the output directory.");
@@ -77,38 +76,6 @@ namespace Mercury
 			}
 
 			return extension.EndsWith(TEMPLATE_EXTENSION);
-		}
-
-		private bool TryToEmptyDirectory(string directory)
-		{
-			bool deletedAllFiles = true;
-			string[] files = Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
-			foreach (string file in files)
-			{
-				try
-				{
-					File.Delete(file);
-				}
-				catch
-				{
-					deletedAllFiles = false;
-				}
-			}
-
-			string[] directories = Directory.GetDirectories(directory);
-			foreach (string directoryPath in directories)
-			{
-				try
-				{
-					Directory.Delete(directoryPath, true);
-				}
-				catch
-				{
-					deletedAllFiles = false;
-				}
-			}
-
-			return deletedAllFiles;
 		}
 
 		private void HaveEachPluginMoveTheirSourceFilesOver(IEnumerable<MercuryPlugin> plugins, string outputDirectory)
@@ -137,32 +104,22 @@ namespace Mercury
 
 					outputFilePath = plugin.ChanceToChangeFileName(outputFilePath);
 
+					string contents = string.Empty;
 					if (!fileNeedsTemplating)
 					{
-						File.Copy(pluginFile, outputFilePath);
+						contents = File.ReadAllText(pluginFile);
 					}
 					else
 					{
-						string contents = Render.FileToString(pluginFile, plugin.Settings.ToObject());
-						if (File.Exists(outputFilePath))
-						{
-							string existingFileContents = File.ReadAllText(outputFilePath);
-							diff_match_patch dmp = new diff_match_patch();
-							List<Diff> differences = dmp.diff_lineMode(existingFileContents, contents);
-							differences = differences.Where(x => x.operation != Operation.DELETE).ToList(); // Since we're "merging" whole different features, we don't want to remove lines. So we remove any deletes from the diff list.
-							List<Patch> patches = dmp.patch_make(existingFileContents, differences);
-							string patchesText = dmp.patch_toText(patches);
-							object[] results = dmp.patch_apply(patches, existingFileContents);
-							contents = (string)results[0];
-						}
-
-						foreach (MercuryPlugin otherPlugin in plugins)
-						{
-							contents = otherPlugin.ChanceToProcessFile(relativePath, contents);
-						}
-
-						File.WriteAllText(outputFilePath, contents);
+						contents = Render.FileToString(pluginFile, plugin.Settings.ToObject());	
 					}
+
+					foreach (MercuryPlugin otherPlugin in plugins)
+					{
+						contents = otherPlugin.ChanceToProcessFile(relativePath, contents);
+					}
+
+					FilesystemHelper.EnsureDirectoryExistsAndWriteOrMergeFileContents(outputFilePath, contents);
 				}
 			}
 		}

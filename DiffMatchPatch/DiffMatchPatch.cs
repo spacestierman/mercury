@@ -259,9 +259,9 @@ namespace DiffMatchPatch
 		public List<Diff> diff_lineMode(string text1, string text2)
 		{
 			diff_match_patch diff = new diff_match_patch();
-			var linesResult = diff.diff_linesToChars(text1, text2);
-			var lineText1 = linesResult[0];
-			var lineText2 = linesResult[1];
+			object[] linesResult = diff.diff_linesToChars(text1, text2);
+			object lineText1 = linesResult[0];
+			object lineText2 = linesResult[1];
 			List<string> lineArray = linesResult[2] as List<string>;
 			List<Diff> diffs = diff.diff_main(lineText1.ToString(), lineText2.ToString(), false);
 			diff.diff_charsToLines(diffs, lineArray);
@@ -363,8 +363,7 @@ namespace DiffMatchPatch
 		 * @param deadline Time when the diff should be complete by.
 		 * @return List of Diff objects.
 		 */
-		private List<Diff> diff_compute(string text1, string text2,
-										bool checklines, DateTime deadline)
+		private List<Diff> diff_compute(string text1, string text2, bool checklines, DateTime deadline)
 		{
 			List<Diff> diffs = new List<Diff>();
 

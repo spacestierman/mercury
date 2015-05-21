@@ -9,6 +9,12 @@
 			"settings": {
 				"namespace": "Com.Space150.SampleProject.Web"
 			}
+		},
+		{
+			"type": "Mercury.Plugins.Test.TestMercuryPlugin",
+			"settings": { 
+				"namespace": "Com.Space150.SampleProject.Web"
+			}
 		}
 	],
 	"entities": [

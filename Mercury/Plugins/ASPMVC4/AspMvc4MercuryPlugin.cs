@@ -59,5 +59,10 @@ namespace Mercury.Plugins.ASPMVC4
 				FilesystemHelper.EnsureDirectoryExistsAndWriteFileContents(controllerFile, controllerCode);
 			}
 		}
+
+		private void BuildControllers(IEnumerable<MercuryEntity> entities, string coreDirectory, string outputDirectory)
+		{
+
+		}
 	}
 }

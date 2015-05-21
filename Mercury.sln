@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mercury.Common", "Mercury.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffMatchPatch", "DiffMatchPatch\DiffMatchPatch.csproj", "{32BC530F-E347-435E-84A3-2737A5E03901}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mercury.Tests", "Mercury.Tests\Mercury.Tests.csproj", "{7CB1721D-74F0-4FE2-A75E-1A0FC9AB6949}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{32BC530F-E347-435E-84A3-2737A5E03901}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32BC530F-E347-435E-84A3-2737A5E03901}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32BC530F-E347-435E-84A3-2737A5E03901}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CB1721D-74F0-4FE2-A75E-1A0FC9AB6949}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CB1721D-74F0-4FE2-A75E-1A0FC9AB6949}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CB1721D-74F0-4FE2-A75E-1A0FC9AB6949}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CB1721D-74F0-4FE2-A75E-1A0FC9AB6949}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

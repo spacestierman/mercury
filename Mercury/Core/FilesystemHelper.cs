@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DiffMatchPatch;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -100,6 +101,52 @@ namespace Mercury.Core
 			EnsureAllDirectoriesExist(directory);
 
 			File.WriteAllText(absoluteFilePath, fileContent);
+		}
+
+		public static void EnsureDirectoryExistsAndWriteOrMergeFileContents(string absoluteFilePath, string fileContent)
+		{
+			string directory = GetDirectoryForFilePath(absoluteFilePath);
+			EnsureAllDirectoriesExist(directory);
+
+			if (File.Exists(absoluteFilePath))
+			{
+				string existingFileContents = File.ReadAllText(absoluteFilePath);
+				fileContent = LineMerger.Merge(existingFileContents, fileContent);
+			}
+
+			File.WriteAllText(absoluteFilePath, fileContent);
+		}
+
+		public static bool TryToEmptyDirectory(string directory)
+		{
+			bool deletedAllFiles = true;
+			string[] files = Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
+			foreach (string file in files)
+			{
+				try
+				{
+					File.Delete(file);
+				}
+				catch
+				{
+					deletedAllFiles = false;
+				}
+			}
+
+			string[] directories = Directory.GetDirectories(directory);
+			foreach (string directoryPath in directories)
+			{
+				try
+				{
+					Directory.Delete(directoryPath, true);
+				}
+				catch
+				{
+					deletedAllFiles = false;
+				}
+			}
+
+			return deletedAllFiles;
 		}
 	}
 }
