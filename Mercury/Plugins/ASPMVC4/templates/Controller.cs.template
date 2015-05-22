@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace {{#settings}}{{namespace}}{{/settings}}.Controllers
 {
-    public class {{#Entity}}{{Name}}{{/Entity}}Controller : Controller
+    public class {{#Entity}}{{NameSingular}}{{/Entity}}Controller : Controller
     {
         public ActionResult Index()
         {

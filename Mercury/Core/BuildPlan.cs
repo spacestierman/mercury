@@ -17,31 +17,31 @@ namespace Mercury.Core
 
 		public void Add(IBuildStep step)
 		{
-			_steps.Add(step);
-		}
-
-		public void Merge(BuildPlan otherPlan)
-		{
 			List<IBuildStep> removeConflictedSteps = new List<IBuildStep>();
-			foreach (IBuildStep step in otherPlan._steps)
+			IEnumerable<IBuildStep> conflicts = FindConflicts(step);
+			if (!conflicts.Any())
 			{
-				IEnumerable<IBuildStep> conflicts = FindConflicts(step);
-				if (!conflicts.Any())
-				{
-					Add(step);
-				}
-				else
-				{
-					IBuildStep mergedStep = step.MergeWith(conflicts);
-					Add(mergedStep);
-					removeConflictedSteps.AddRange(conflicts);
-				}
+				_steps.Add(step);
+			}
+			else
+			{
+				IBuildStep mergedStep = step.MergeWith(conflicts);
+				_steps.Add(mergedStep);
+				removeConflictedSteps.AddRange(conflicts);
 			}
 
 			// Since the conflicts are "resolved" by adding a new merged BuildStep, we need to remove the old conflicted steps so that we're not doubled-up.
 			foreach (IBuildStep conflict in removeConflictedSteps)
 			{
 				_steps.Remove(conflict);
+			}
+		}
+
+		public void Merge(BuildPlan otherPlan)
+		{
+			foreach (IBuildStep step in otherPlan._steps)
+			{
+				Add(step);
 			}
 		}
 

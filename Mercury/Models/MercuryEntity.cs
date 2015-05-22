@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mercury.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,15 @@ namespace Mercury.Models
 		public string Name { get; set; }
 		public string DisplayName { get; set; }
 		public IEnumerable<MercuryField> Fields { get; set; }
+
+		public string NameSingular
+		{
+			get { return Pluralizer.MakeSingular(Name); }
+		}
+
+		public string NamePlural
+		{
+			get { return Pluralizer.MakePlural(Name); }
+		}
 	}
 }

@@ -1,0 +1,19 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.ComponentModel.DataAnnotations;
+
+namespace {{#settings}}{{namespace}}{{/settings}}.Models.{{#Entity}}{{NameSingular}}{{/Entity}}
+{
+	public class {{#Entity}}{{NameSingular}}{{/Entity}}InputModel
+	{
+		{{#Entity}}
+			{{#Fields}}
+				{{#IsRequired}}[Required]{{/IsRequired}}
+				public string {{Name}} { get; set; }
+			{{/Fields}}
+		{{/Entity}}
+	}
+}

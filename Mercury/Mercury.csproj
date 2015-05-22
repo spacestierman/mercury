@@ -53,6 +53,7 @@
     <Compile Include="Core\FilesystemHelper.cs" />
     <Compile Include="Core\IBuildStep.cs" />
     <Compile Include="Core\LineMerger.cs" />
+    <Compile Include="Core\Pluralizer.cs" />
     <Compile Include="Core\SaveFileContentsBuildStep.cs" />
     <Compile Include="Models\MercuryEntityFieldjson.cs" />
     <Compile Include="Models\MercuryEntity.cs" />

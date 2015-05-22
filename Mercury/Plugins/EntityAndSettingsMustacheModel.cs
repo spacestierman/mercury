@@ -1,4 +1,5 @@
-﻿using Mercury.Models;
+﻿using Mercury.Common;
+using Mercury.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,22 @@ namespace Mercury.Plugins
 {
 	public class EntityAndSettingsMustacheModel
 	{
-		public MercuryEntity Entity { get; set; }
-		public object Settings { get; set; }
+		public MercuryEntity Entity { get; private set; }
+		public object Settings { get; private set; }
+
+		public EntityAndSettingsMustacheModel(MercuryEntity entity, MercurySettings settings)
+		{
+			if (entity == null)
+			{
+				throw new ArgumentRequiredException("entity");
+			}
+			Entity = entity;
+
+			if (settings == null)
+			{
+				throw new ArgumentRequiredException("settings");
+			}
+			Settings = settings.ToObject();
+		}
 	}
 }

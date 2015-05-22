@@ -12,6 +12,9 @@ namespace Mercury.Plugins
 {
 	public class MustachePlugin : MercuryPlugin
 	{
+		private const string TEMPLATE_EXTENSION = "template";
+		private const string TEMPLATE_INDICATOR = "." + TEMPLATE_EXTENSION;
+
 		public MustachePlugin(string name, string relativeDirectory)
 			: base(name, relativeDirectory)
 		{
@@ -61,14 +64,20 @@ namespace Mercury.Plugins
 			return plan;
 		}
 
-		private string GetRelativeTemplateDirectory()
+		protected string GetRelativeTemplateDirectory()
 		{
 			return @"templates\";
 		}
 
-		private string GetRelativeSourceDirectory()
+		protected string GetRelativeSourceDirectory()
 		{
 			return @"source\";
+		}
+
+		protected string GetTemplateFilePath(string relativePath)
+		{
+			string path = FilesystemHelper.MergePaths(GetRelativeTemplateDirectory(), relativePath);
+			return path;
 		}
 
 		private string RemoveSourceDirectoryFromPath(string path)
@@ -82,8 +91,6 @@ namespace Mercury.Plugins
 			return path.Substring(sourceDirectory.Length);
 		}
 
-		const string TEMPLATE_INDICATOR = "template";
-		const string TEMPLATE_EXTENSION = "." + TEMPLATE_INDICATOR;
 		private bool FileNeedsTemplating(string filepath)
 		{
 			string extension = FilesystemHelper.GetFileExtension(filepath);
@@ -92,12 +99,12 @@ namespace Mercury.Plugins
 				return false;
 			}
 
-			return extension.CompareTo(TEMPLATE_INDICATOR) == 0;
+			return extension.CompareTo(TEMPLATE_EXTENSION) == 0;
 		}
 
 		private string RemoveTemplateFileExtension(string file)
 		{
-			return file.Substring(0, file.Length - TEMPLATE_EXTENSION.Length);
+			return file.Substring(0, file.Length - TEMPLATE_INDICATOR.Length);
 		}
 
 		private bool PathNeedsTemplating(string path)
@@ -114,9 +121,14 @@ namespace Mercury.Plugins
 			return true;
 		}
 
-		private string ApplyMustache(string content, MercurySettings settings)
+		protected string ApplyMustache(string content, MercurySettings data)
 		{
-			string output = Render.StringToString(content, settings.ToObject());
+			return ApplyMustache(content, data.ToObject());
+		}
+
+		protected string ApplyMustache(string content, object data)
+		{
+			string output = Render.StringToString(content, data);
 			return output;
 		}
 	}

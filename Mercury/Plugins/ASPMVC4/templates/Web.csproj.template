@@ -1,0 +1,6 @@
+<!-- [Start] Mercury Compile files -->
+{{#Entity}}
+	<Compile Include="Controllers\{{NameSingular}}Controller.cs" />
+	<Compile Include="Models\{{NameSingular}}\{{NameSingular}}InputModel.cs" />
+{{/Entity}}
+<!-- [End] Mercury Compile files -->

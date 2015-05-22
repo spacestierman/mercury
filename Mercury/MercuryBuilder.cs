@@ -14,9 +14,6 @@ namespace Mercury
 {
     public class MercuryBuilder
     {
-		private const string TEMPLATE_EXTENSION = "template";
-		private const string TEMPLATE_INDICATOR = "." + TEMPLATE_EXTENSION;
-
 		private string _rootDirectory;
 
         public MercuryBuilder(string rootDirectory)
@@ -63,7 +60,6 @@ namespace Mercury
 				throw new Exception("Unable to delete all of the files in the output directory.");
 			}
 
-			
 			BuildPlan projectBuildPlan = new BuildPlan();
 			foreach (MercuryPlugin plugin in project.Plugins)
 			{
