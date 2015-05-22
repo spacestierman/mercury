@@ -7,17 +7,11 @@ using System.Threading.Tasks;
 
 namespace Mercury.Plugins.EpiServer
 {
-	public class EpiServerMercuryPlugin : MercuryPlugin
+	public class EpiServerMercuryPlugin : MustachePlugin
 	{
-		public EpiServerMercuryPlugin() : base("EpiServer", @"Episerver\source\", @"Episerver\templates\")
+		public EpiServerMercuryPlugin() : base("EpiServer", @"Episerver\")
 		{
-			ListenForFilenamePattern("Web.config");
-		}
 
-		protected override string OnFilenamePatternMatched(string filename, string contents)
-		{
-			Console.WriteLine("EpiServerMercuryPlugin ChanceToProcessFile(\"{0}\")", filename);
-			return contents;
 		}
 	}
 }

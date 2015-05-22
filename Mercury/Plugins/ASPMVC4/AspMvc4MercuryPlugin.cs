@@ -10,59 +10,18 @@ using System.Threading.Tasks;
 
 namespace Mercury.Plugins.ASPMVC4
 {
-	public class AspMvc4MercuryPlugin : MercuryPlugin
+	public class AspMvc4MercuryPlugin : MustachePlugin
 	{
-		const string BUILD_NAME = "MvcApplicationName";
-
-		public AspMvc4MercuryPlugin() : base("ASP.NET MVC 4", @"ASPMVC4\source\", @"ASPMVC4\templates\")
+		public AspMvc4MercuryPlugin() : base("ASP.NET MVC 4", @"ASPMVC4\")
 		{
 		}
 
-		public string Namespace {
-			get { return Settings.GetAsString("Namespace"); }
-		}
-
-		override public string ChanceToChangeDirectoryName(string directoryPath)
+		public override BuildPlan Build(IEnumerable<MercuryEntity> entities, FileContentsProvider fileContentsProvider)
 		{
-			if (directoryPath.IndexOf(BUILD_NAME) >= 0)
-			{
-				directoryPath = directoryPath.Replace(BUILD_NAME, Settings.GetAsString("Namespace"));
-			}
+			BuildPlan plan = base.Build(entities, fileContentsProvider);
 
-			return directoryPath;
-		}
-
-		override public string ChanceToChangeFileName(string filePath)
-		{
-			if (filePath.IndexOf(BUILD_NAME) >= 0)
-			{
-				filePath = filePath.Replace(BUILD_NAME, Settings.GetAsString("Namespace"));
-			}
-
-			return filePath;
-		}
-
-		public override void ChanceToProcessEntities(IEnumerable<MercuryEntity> entities, string coreDirectory, string outputDirectory)
-		{
-			base.ChanceToProcessEntities(entities, coreDirectory, outputDirectory);
-
-			foreach (MercuryEntity entity in entities)
-			{
-				EntityAndSettingsMustacheModel model = new EntityAndSettingsMustacheModel();
-				model.Entity = entity;
-				model.Settings = Settings.ToObject();
-
-				/// TODO: figure out a better way to not hardcode a bunch of these paths
-				string controllerCode = Render.FileToString(coreDirectory + @"Plugins\" + TemplateDirectory + "Controller.cs.template", model);
-				string controllerFile = outputDirectory + Namespace + @"\Controllers\" + entity.Name + "Controller.cs";
-
-				FilesystemHelper.EnsureDirectoryExistsAndWriteFileContents(controllerFile, controllerCode);
-			}
-		}
-
-		private void BuildControllers(IEnumerable<MercuryEntity> entities, string coreDirectory, string outputDirectory)
-		{
-
+			/// TODO: Build Controllers, ViewModels, etc
+			return plan;
 		}
 	}
 }

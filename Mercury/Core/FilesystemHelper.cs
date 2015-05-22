@@ -148,5 +148,15 @@ namespace Mercury.Core
 
 			return deletedAllFiles;
 		}
+
+		public static string MergePaths(string a, string b)
+		{
+			a = EnsureForwardSlashes(a);
+			a = EnsureTrailingForwardSlash(a);
+
+			b = EnsureForwardSlashes(b);
+
+			return a + b;
+		}
 	}
 }

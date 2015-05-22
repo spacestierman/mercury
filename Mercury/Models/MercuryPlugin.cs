@@ -1,4 +1,5 @@
 ﻿using Mercury.Common;
+using Mercury.Core;
 using Mercury.Models;
 using Newtonsoft.Json;
 using System;
@@ -13,106 +14,33 @@ namespace Mercury.Models
 {
 	public class MercuryPlugin
 	{
-		public string Name { get; set; }
-		public string SourceDirectory { get; set; }
-		public string TemplateDirectory { get; set; }
-		
+		public string Name { get; private set; }
+		public string RelativeDirectory { get; private set; }
+		public List<MercuryPlugin> Dependencies { get; private set; } /// TODO: Implement
 		public MercurySettings Settings { get; set; }
 
-		public List<MercuryPlugin> Dependencies { get; set; }
-
-
-		private List<Regex> _listenForFilenamePatterns;
-
-		public MercuryPlugin(string name, string sourceDirectory, string templateDirectory)
+		public MercuryPlugin(string name, string relativeDirectory)
 		{
 			if (string.IsNullOrEmpty(name))
 			{
 				throw new ArgumentRequiredException("name");
 			}
-			if (string.IsNullOrEmpty(sourceDirectory))
-			{
-				throw new ArgumentRequiredException("sourceDirectory");
-			}
-			if (string.IsNullOrEmpty(templateDirectory))
-			{
-				throw new ArgumentRequiredException("templateDirectory");
-			}
-
 			Name = name;
-			SourceDirectory = sourceDirectory;
-			TemplateDirectory = templateDirectory;
 
-			Settings = new MercurySettings();
+			if (string.IsNullOrEmpty(relativeDirectory))
+			{
+				throw new ArgumentRequiredException("relativeDirectory");
+			}
+			RelativeDirectory = relativeDirectory;
 
 			Dependencies = new List<MercuryPlugin>();
-			_listenForFilenamePatterns = new List<Regex>();
+			Settings = new MercurySettings();
 		}
 
-		public virtual void LoadSettings(MercurySettings projectSettings)
+		public virtual BuildPlan Build(IEnumerable<MercuryEntity> entities, FileContentsProvider fileContentsProvider)
 		{
-			// For subclasses to pull values out of
-		}
-
-		public void ListenForFilenamePattern(string pattern)
-		{
-			if (string.IsNullOrEmpty(pattern))
-			{
-				throw new ArgumentRequiredException("pattern");
-			}
-
-			Regex regex = new Regex(pattern);
-			ListenForFilenamePattern(regex);
-		}
-
-		public void ListenForFilenamePattern(Regex pattern)
-		{
-			if (pattern == null)
-			{
-				throw new ArgumentRequiredException("pattern");
-			}
-
-			if (_listenForFilenamePatterns.Contains(pattern))
-			{
-				throw new ArgumentException("pattern is already in the set");
-			}
-
-			_listenForFilenamePatterns.Add(pattern);
-		}
-
-		public virtual string ChanceToProcessFile(string filename, string contents)
-		{
-			Console.WriteLine("MercuryPlugin ChanceToProcessFile(\"{0}\", contents)", filename);
-			string output = contents;
-			foreach (Regex regex in _listenForFilenamePatterns)
-			{
-				if (regex.IsMatch(filename))
-				{
-					output = OnFilenamePatternMatched(filename, contents);
-				}
-			}
-
-			return output;
-		}
-
-		protected virtual string OnFilenamePatternMatched(string filename, string contents) 
-		{
-			return contents; // For subclasses to implement
-		}
-
-		public virtual string ChanceToChangeDirectoryName(string directoryPath)
-		{
-			return directoryPath; // For subclasses to implement
-		}
-
-		public virtual string ChanceToChangeFileName(string filePath)
-		{
-			return filePath; // For subclasses to implement
-		}
-
-		public virtual void ChanceToProcessEntities(IEnumerable<MercuryEntity> entities, string rootDirectory, string outputDirectory)
-		{
-			// For subclasses to implement
+			BuildPlan plan = new BuildPlan();
+			return plan; // Subclasses override and add details to this plan
 		}
 	}
 }
