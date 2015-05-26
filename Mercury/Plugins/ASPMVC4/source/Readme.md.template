@@ -1,0 +1,8 @@
+# Mercury ASP.NET MVC
+## Setup
+- Run the {{namespace}}.Data/SqlSetup.sql script on your database.
+- Open the .sln project in Visual Studio. 
+- Open the {{namespace}}.Data/Entities.edmx file in Visual Studio and import the model from your database
+- Update the {{namespace}}.Web/Web.config with your connection string details.
+- Build the project
+- Run and enjoy!

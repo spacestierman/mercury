@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "{{namespace}}.Web", "{{namespace}}.Web\{{namespace}}.Web.csproj", "{1A6078BF-4658-49AB-9E1D-4CBCEF680CF0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "{{namespace}}.Data", "{{namespace}}.Data\{{namespace}}.Data.csproj", "{23FEE72F-F74E-441E-8CED-4822287F5E97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
