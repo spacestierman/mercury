@@ -9,11 +9,9 @@ namespace {{#settings}}{{namespace}}{{/settings}}.Models.{{#Entity}}{{NameSingul
 {
 	public class {{#Entity}}{{NameSingular}}{{/Entity}}InputModel
 	{
-		{{#Entity}}
-			{{#Fields}}
-				{{#IsRequired}}[Required]{{/IsRequired}}
-				public string {{Name}} { get; set; }
-			{{/Fields}}
-		{{/Entity}}
+		{{#Entity}}{{#Fields}}
+		{{#IsRequired}}[Required]{{/IsRequired}}
+		public {{TypeForCSharp}} {{Name}} { get; set; }
+		{{/Fields}}{{/Entity}}
 	}
 }

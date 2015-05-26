@@ -1,4 +1,5 @@
-﻿using Mercury.Validations;
+﻿using Mercury.Common;
+using Mercury.Validations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,23 @@ namespace Mercury.Models
 			get
 			{
 				return ValidationRules.Any(x => x is RequiredValidation);
+			}
+		}
+
+		public string TypeForCSharp
+		{
+			get
+			{
+				switch (Type)
+				{
+					case MercuryFieldType.INTEGER:
+						return "int";
+					case MercuryFieldType.TEXT:
+					case MercuryFieldType.VARCHAR:
+						return "string";
+					default:
+						throw new FormattedException("Unable to determine field type for \"{0}\".", Type);
+				}
 			}
 		}
 	}
