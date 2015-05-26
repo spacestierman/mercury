@@ -23,6 +23,7 @@ namespace Mercury.Plugins.ASPMVC4
 			plan.Merge(BuildControllerPlans(entities, fileContentsProvider));
 			plan.Merge(BuildInputModelPlans(entities, fileContentsProvider));
 			//plan.Merge(BuildInputValidatorPlans(entities, fileContentsProvider));
+			plan.Merge(BuildSqlImportPlans(entities, fileContentsProvider));
 
 			/// TODO: Build Controllers, ViewModels, etc
 			return plan;
@@ -92,10 +93,23 @@ namespace Mercury.Plugins.ASPMVC4
 			return plan;
 		}
 
-		private string BuildEntityFileContents(MercuryEntity entity, string controllerTemplate)
+		private BuildPlan BuildSqlImportPlans(IEnumerable<MercuryEntity> entities, FileContentsProvider fileContentsProvider)
+		{
+			string template = fileContentsProvider.GetFileContents(GetTemplateFilePath("SqlImport.sql.template"));
+			EntitiesAndSettingsMustacheModel model = new EntitiesAndSettingsMustacheModel(entities, Settings);
+			string filePath = Settings.Get("Namespace") + @".Data\SqlImport.sql";
+			string contents = ApplyMustache(template, model);
+
+			BuildPlan plan = new BuildPlan();
+			plan.Add(new SaveFileContentsBuildStep(filePath, contents));
+
+			return plan;
+		}
+
+		private string BuildEntityFileContents(MercuryEntity entity, string template)
 		{
 			EntityAndSettingsMustacheModel model = new EntityAndSettingsMustacheModel(entity, Settings);
-			return ApplyMustache(controllerTemplate, model);
+			return ApplyMustache(template, model);
 		}
 	}
 }

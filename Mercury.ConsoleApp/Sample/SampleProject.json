@@ -94,9 +94,8 @@
 						{ "type": "Mercury.Validations.RequiredValidation" }
 					],
 					"uiHint": "input[radio]",
-					"references": {
+					"reference": {
 						"entity": "Industries",
-						"key": "IndustryID",
 						"display": "Name"
 					}
 				},

@@ -1,0 +1,20 @@
+{{#Entities}}
+CREATE TABLE {{NamePlural}} (
+	{{#Fields}}
+		[{{Name}}] {{TypeForSql}} {{#IsRequired}}NOT NULL{{/IsRequired}} {{#IsPrimaryKey}}IDENTITY(1,1) PRIMARY KEY{{/IsPrimaryKey}}
+		{{#IsNotLastField}},{{/IsNotLastField}}
+	{{/Fields}}
+);
+{{/Entities}}
+
+{{#Entities}}
+	{{#HasAnyFieldsThatNeedReferences}}
+		{{#Fields}}
+			{{#HasReference}}
+ALTER TABLE {{NamePlural}}
+ADD CONSTRAINT FK_{{#Reference}}{{#Entity}}{{Name}}_{{#PrimaryKey}}{{Name}}{{/PrimaryKey}}{{/Entity}}{{/Reference}}  FOREIGN KEY ([{{Name}}])
+REFERENCES {{#Reference}}{{#Entity}}{{Name}}({{#PrimaryKey}}{{Name}}{{/PrimaryKey}}){{/Entity}}{{/Reference}};
+			{{/HasReference}}
+		{{/Fields}}
+	{{/HasAnyFieldsThatNeedReferences}}
+{{/Entities}}

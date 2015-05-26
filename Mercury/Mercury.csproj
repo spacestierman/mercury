@@ -59,10 +59,13 @@
     <Compile Include="Models\MercuryEntity.cs" />
     <Compile Include="Models\MercuryEntityData.cs" />
     <Compile Include="Models\MercuryField.cs" />
+    <Compile Include="Models\MercuryFieldReference.cs" />
+    <Compile Include="Models\MercuryFieldReferenceJson.cs" />
     <Compile Include="Models\MercuryFieldType.cs" />
     <Compile Include="Models\MercuryUiHint.cs" />
     <Compile Include="Models\MercuryValidationRuleJson.cs" />
     <Compile Include="Plugins\ASPMVC4\AspMvc4MercuryPlugin.cs" />
+    <Compile Include="Plugins\EntitiesAndSettingsMustacheModel.cs" />
     <Compile Include="Plugins\EntityAndSettingsMustacheModel.cs" />
     <Compile Include="Plugins\EpiServer\EpiServerMercuryPlugin.cs" />
     <Compile Include="MercuryBuilder.cs" />

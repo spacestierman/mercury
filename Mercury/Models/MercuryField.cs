@@ -18,11 +18,15 @@ namespace Mercury.Models
 
 		public IEnumerable<MercuryValidationRule> ValidationRules { get; set; }
 
+		public MercuryFieldReference Reference { get; set; }
+
+		public bool IsLastField { get; internal set; }
+
 		public bool IsRequired
 		{
 			get
 			{
-				return ValidationRules.Any(x => x is RequiredValidation);
+				return IsPrimaryKey || ValidationRules.Any(x => x is RequiredValidation);
 			}
 		}
 
@@ -41,6 +45,33 @@ namespace Mercury.Models
 						throw new FormattedException("Unable to determine field type for \"{0}\".", Type);
 				}
 			}
+		}
+
+		public string TypeForSql
+		{
+			get
+			{
+				switch (Type)
+				{
+					case MercuryFieldType.INTEGER:
+						return "int";
+					case MercuryFieldType.TEXT:
+					case MercuryFieldType.VARCHAR:
+						return "nvarchar(255)"; /// TODO: Check for maximum length
+					default:
+						throw new FormattedException("Unable to determine field type for \"{0}\".", Type);
+				}
+			}
+		}
+
+		public bool HasReference
+		{
+			get { return Reference != null; }
+		}
+
+		public bool IsNotLastField
+		{
+			get { return !IsLastField; }
 		}
 	}
 }

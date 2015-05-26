@@ -75,8 +75,15 @@ namespace Mercury.Models
 				entity.DisplayName = entityJson.DisplayName;
 				entity.Fields = ParseEntityFields(entityJson.Fields);
 
+				if (entity.HasMultiplePrimaryKeys)
+				{
+					throw new FormattedException("We do not support multiple primary keys yet.");
+				}
+
 				list.Add(entity);
 			}
+
+			HookupEntityReferences(list, set);
 
 			return list;
 		}
@@ -91,6 +98,8 @@ namespace Mercury.Models
 				list.Add(field);
 			}
 
+			list.Last().IsLastField = true;
+
 			return list;
 		}
 
@@ -99,6 +108,7 @@ namespace Mercury.Models
 			MercuryField field = new MercuryField();
 			field.Name = json.Name;
 			field.DisplayName = json.DisplayName;
+			field.IsPrimaryKey = json.IsPrimaryKey;
 			field.Type = ParseFieldType(json.Type);
 			field.UiHint = TryToParseUiHint(json.UiHint);
 			field.ValidationRules = ParseValidationRules(json.Validation);
@@ -176,6 +186,26 @@ namespace Mercury.Models
 			rule.LoadFromSettings(settings);
 
 			return rule;
+		}
+
+		private static void HookupEntityReferences(IEnumerable<MercuryEntity> entities, IEnumerable<MercuryEntityData> json)
+		{
+			foreach (MercuryEntity entity in entities)
+			{
+				MercuryEntityData entityJson = json.First(x => x.Name == entity.Name);
+				foreach (MercuryField field in entity.Fields)
+				{
+					MercuryEntityFieldJson fieldJson = entityJson.Fields.First(x => x.Name == field.Name);
+					if (fieldJson.HasReference)
+					{
+						MercuryEntity referencedEntity = entities.First(x => x.Name == fieldJson.Reference.Entity);
+						MercuryField displayField = referencedEntity.Fields.First(x => x.Name == fieldJson.Reference.Display);
+
+						MercuryFieldReference reference = new MercuryFieldReference(referencedEntity, displayField);
+						field.Reference = reference;
+					}
+				}
+			}
 		}
 	}
 }

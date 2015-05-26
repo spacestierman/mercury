@@ -15,5 +15,11 @@ namespace Mercury.Models
 		public string UiHint { get; set; }
 
 		public IEnumerable<MercuryValidationRuleJson> Validation { get; set; }
+		
+		public MercuryFieldReferenceJson Reference { get; set; }
+		public bool HasReference
+		{
+			get { return Reference != null; }
+		}
 	}
 }
