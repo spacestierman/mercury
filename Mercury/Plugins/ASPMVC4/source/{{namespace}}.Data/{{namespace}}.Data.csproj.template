@@ -7,8 +7,8 @@
     <ProjectGuid>{23FEE72F-F74E-441E-8CED-4822287F5E97}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MvcApplication1.Data</RootNamespace>
-    <AssemblyName>MvcApplication1.Data</AssemblyName>
+    <RootNamespace>{{namespace}}.Data</RootNamespace>
+    <AssemblyName>{{namespace}}.Data</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
